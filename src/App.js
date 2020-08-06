@@ -97,7 +97,6 @@ function App() {
               }}>
                 <p>
                   <span className="has-text-weight-bold">{renderHtml(result.question)}</span>
-                  <br />
                   {result.answer}
                 </p>
 
