@@ -17,6 +17,8 @@ import {
 import './App.css';
 import AnswerOptions from './components/container/AnswerOptions';
 
+const renderHtml = (rawHTML) => React.createElement("p", { dangerouslySetInnerHTML: { __html: rawHTML } })
+
 function App() {
   const { state, dispatch } = useContext(QuizContext);
   const {
@@ -94,7 +96,7 @@ function App() {
                 justifyContent: "space-between"
               }}>
                 <p>
-                  <span className="has-text-weight-bold">{result.question}</span>
+                  <span className="has-text-weight-bold">{renderHtml(result.question)}</span>
                   <br />
                   {result.answer}
                 </p>
@@ -122,7 +124,7 @@ function App() {
             <p className="has-text-weight-bold mb-3">Question {current_question + 1} of {questions.length}</p>
 
             <div className="box notification is-success is-light">
-              {questions[current_question] ? questions[current_question].question : ''}
+              {questions[current_question] ? renderHtml(questions[current_question].question) : ''}
             </div>
 
             <AnswerOptions
