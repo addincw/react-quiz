@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useEffect, useContext } from 'react';
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
-import rootReducer from './store/reducer';
+import { QuizContext } from './store/QuizContext';
+import {
+  SET_CURRENT_QUESTION,
+  SET_CURRENT_ANSWER,
+  SET_QUESTIONS,
+  SET_ANSWERS,
+  RESTART,
+  SET_IS_RESTART,
+  SET_IS_FINISH,
+  SET_RESULTS
+} from './store/QuizActionTypes';
 
 import './App.css';
 import AnswerOptions from './components/container/AnswerOptions';
-import { SET_CURRENT_QUESTION, SET_CURRENT_ANSWER, SET_QUESTIONS, SET_ANSWERS, RESTART, SET_IS_RESTART, SET_IS_FINISH, SET_RESULTS } from './store/actionTypes';
 
 function App() {
-  const initialState = {
-    questions: [],
-    answers: [],
-    results: [],
-    current_question: 0,
-    current_answer: '',
-    is_finish: false,
-    is_restart: false
-  };
-
-  const [state, dispatch] = useReducer(rootReducer, initialState);
+  const { state, dispatch } = useContext(QuizContext);
   const {
     questions,
     answers,
@@ -30,7 +29,6 @@ function App() {
     is_restart,
   } = state;
 
-  const handleSelectAnswer = answer => dispatch({ type: SET_CURRENT_ANSWER, payload: answer });
   const handleNextQuestion = () => {
     dispatch({ type: SET_ANSWERS, payload: { indexQuestion: current_question, answer: current_answer } });
     dispatch({ type: SET_CURRENT_ANSWER, payload: '' });
@@ -130,7 +128,6 @@ function App() {
             <AnswerOptions
               options={questions[current_question] ? questions[current_question].answerOptions : []}
               currentAnswer={current_answer}
-              handleSelectAnswer={handleSelectAnswer}
             />
 
             <button

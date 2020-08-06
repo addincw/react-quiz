@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
+import { QuizContext } from "../../store/QuizContext";
+import { SET_CURRENT_ANSWER } from "../../store/QuizActionTypes";
 
-function AnswerItem({ order, answer, isSelected, handleSelectAnswer }) {
-    let icon = 'fa-circle-notch';
+function AnswerItem({ order, answer, isSelected }) {
+    const { dispatch } = useContext(QuizContext);
+
     const selectedStyle = isSelected ?
         {
             border: '1px solid #48c774',
             margin: '-1px'
-        } : {}
+        } : {};
 
+    let icon = 'fa-circle-notch';
     switch (order) {
         case 'a':
             icon = 'fa-adobe';
@@ -25,6 +29,8 @@ function AnswerItem({ order, answer, isSelected, handleSelectAnswer }) {
             icon = 'fa-circle-notch';
             break;
     }
+
+    const handleSelectAnswer = answer => dispatch({ type: SET_CURRENT_ANSWER, payload: answer });
 
     return (
         <div

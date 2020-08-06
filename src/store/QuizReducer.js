@@ -7,7 +7,7 @@ import {
     SET_IS_FINISH,
     SET_IS_RESTART,
     RESTART
-} from "./actionTypes";
+} from "./QuizActionTypes";
 
 export default (state, action) => {
     switch (action.type) {

@@ -1,7 +1,7 @@
 import React from "react";
 import AnswerItem from "../base/AnswerItem";
 
-function AnswerOptions({ options, currentAnswer, handleSelectAnswer }) {
+function AnswerOptions({ options, currentAnswer }) {
     const orders = ['a', 'b', 'c', 'd'];
 
     return (
@@ -12,7 +12,6 @@ function AnswerOptions({ options, currentAnswer, handleSelectAnswer }) {
                         order={orders.shift()}
                         answer={answer}
                         isSelected={currentAnswer === answer}
-                        handleSelectAnswer={handleSelectAnswer}
                     />
                 </div>
             ))}
