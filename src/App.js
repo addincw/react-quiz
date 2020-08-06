@@ -1,48 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
+import rootReducer from './store/reducer';
+
 import './App.css';
 import AnswerOptions from './components/container/AnswerOptions';
+import { SET_CURRENT_QUESTION, SET_CURRENT_ANSWER, SET_QUESTIONS, SET_ANSWERS, RESTART, SET_IS_RESTART, SET_IS_FINISH, SET_RESULTS } from './store/actionTypes';
 
 function App() {
-  const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [results, setResults] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [currentAnswer, setCurrentAnswer] = useState('');
-  const [isFinish, setIsFinish] = useState(false);
-  const [isRestart, setIsRestart] = useState(false);
+  const initialState = {
+    questions: [],
+    answers: [],
+    results: [],
+    current_question: 0,
+    current_answer: '',
+    is_finish: false,
+    is_restart: false
+  };
 
-  const handleSelectAnswer = answer => setCurrentAnswer(answer);
+  const [state, dispatch] = useReducer(rootReducer, initialState);
+  const {
+    questions,
+    answers,
+    results,
+    current_question,
+    current_answer,
+    is_finish,
+    is_restart,
+  } = state;
+
+  const handleSelectAnswer = answer => dispatch({ type: SET_CURRENT_ANSWER, payload: answer });
   const handleNextQuestion = () => {
-    setAnswers([...answers, { indexQuestion: currentQuestion, answer: currentAnswer }]);
-    setCurrentAnswer('');
+    dispatch({ type: SET_ANSWERS, payload: { indexQuestion: current_question, answer: current_answer } });
+    dispatch({ type: SET_CURRENT_ANSWER, payload: '' });
 
-    if (currentQuestion !== (questions.length - 1)) {
-      setCurrentQuestion(currentQuestion + 1);
+    if (current_question !== (questions.length - 1)) {
+      dispatch({ type: SET_CURRENT_QUESTION, payload: (current_question + 1) });
       return
     };
 
-    handleCheckResult();
+    dispatch({ type: SET_IS_FINISH, payload: true });
   }
-  const handleCheckResult = () => {
-    setIsFinish(true);
+  const handleRestart = () => dispatch({ type: RESTART });
 
-    // setQuestions([]);
-    // setAnswers([]);
-    // setCurrentQuestion(0);
-    // setCurrentAnswer('');
-  }
-  const handleRestart = () => {
-    setIsFinish(false);
-    setIsRestart(!isRestart);
-    setQuestions([]);
-    setAnswers([]);
-    setResults([]);
-    setCurrentQuestion(0);
-    setCurrentAnswer('');
-  }
 
   useEffect(() => {
     fetch('https://opentdb.com/api.php?amount=5&category=21&difficulty=easy&type=multiple')
@@ -59,11 +60,11 @@ function App() {
           }
         });
 
-        setQuestions(fetchedQuestions);
+        dispatch({ type: SET_QUESTIONS, payload: fetchedQuestions });
 
-        if (isRestart) setIsRestart(!isRestart);
+        if (is_restart) dispatch({ type: SET_IS_RESTART, payload: !is_restart });
       })
-  }, [isRestart]);
+  }, [is_restart]);
 
   useEffect(() => {
     const resultQuiz = answers.map(answer => {
@@ -75,7 +76,7 @@ function App() {
         is_correct: (answer.answer === question.answerCorrect)
       }
     })
-    setResults(resultQuiz);
+    dispatch({ type: SET_RESULTS, payload: resultQuiz });
   }, [answers]);
 
   return (
@@ -83,7 +84,7 @@ function App() {
 
       <section style={{ background: "whitesmoke", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div style={{ width: "50vw" }}>
-          <div className="panel mb-3" style={{ display: isFinish ? 'block' : 'none' }}>
+          <div className="panel mb-3" style={{ display: is_finish ? 'block' : 'none' }}>
             <p className="panel-heading">
               Result:
             </p>
@@ -119,16 +120,16 @@ function App() {
             </div>
           </div>
 
-          <div style={{ display: isFinish ? 'none' : 'block' }}>
-            <p className="has-text-weight-bold mb-3">Question {currentQuestion + 1} of {questions.length}</p>
+          <div style={{ display: is_finish ? 'none' : 'block' }}>
+            <p className="has-text-weight-bold mb-3">Question {current_question + 1} of {questions.length}</p>
 
             <div className="box notification is-success is-light">
-              {questions[currentQuestion] ? questions[currentQuestion].question : ''}
+              {questions[current_question] ? questions[current_question].question : ''}
             </div>
 
             <AnswerOptions
-              options={questions[currentQuestion] ? questions[currentQuestion].answerOptions : []}
-              currentAnswer={currentAnswer}
+              options={questions[current_question] ? questions[current_question].answerOptions : []}
+              currentAnswer={current_answer}
               handleSelectAnswer={handleSelectAnswer}
             />
 
@@ -136,18 +137,18 @@ function App() {
               className="button is-success is-fullwidth"
               style={{ alignItems: "center" }}
               onClick={() => handleNextQuestion()}
-              disabled={currentAnswer === '' || currentQuestion === (questions.length - 1)}>
+              disabled={current_answer === '' || current_question === (questions.length - 1)}>
               <span>Confirm and Continue</span>
               <span className="icon">
                 <i className="fas fa-arrow-right"></i>
               </span>
             </button>
 
-            {currentQuestion === (questions.length - 1) && <button
+            {current_question === (questions.length - 1) && <button
               className="button is-info is-fullwidth mt-3"
               style={{ alignItems: "center" }}
               onClick={() => handleNextQuestion()}
-              disabled={currentAnswer === ''}>
+              disabled={current_answer === ''}>
               <span className="icon">
                 <i className="fas fa-flag"></i>
               </span>

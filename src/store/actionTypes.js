@@ -1,0 +1,8 @@
+export const SET_QUESTIONS = 'SET_QUESTIONS';
+export const SET_ANSWERS = 'SET_ANSWERS';
+export const SET_RESULTS = 'SET_RESULTS';
+export const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION';
+export const SET_CURRENT_ANSWER = 'SET_CURRENT_ANSWER';
+export const SET_IS_FINISH = 'SET_IS_FINISH';
+export const SET_IS_RESTART = 'SET_IS_RESTART';
+export const RESTART = 'RESTART';
